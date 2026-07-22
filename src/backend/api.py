@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import ollama
+from time import perf_counter
 
 from fastapi import HTTPException
 from .retriever import get_collection
@@ -17,6 +19,14 @@ from .llm import (
 )
 
 app = FastAPI(title="NBC RAG Chatbot API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class ChatRequest(BaseModel):
@@ -38,6 +48,7 @@ class ChatResponse(BaseModel):
     is_confident: bool
     model_used: str
     sources: list[Source]
+    runtime_ms: int
 
 
 def call_model(question: str, context: str, think: bool, model: str):
@@ -82,6 +93,7 @@ def get_record(record_id: int):
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
+    started_at = perf_counter()
     retrieval = retrieve(req.question, top_k=req.top_k)
 
     if not retrieval["is_confident"]:
@@ -91,6 +103,7 @@ def chat(req: ChatRequest):
             is_confident=False,
             model_used="none",
             sources=[],
+            runtime_ms=round((perf_counter() - started_at) * 1000),
         )
 
     context = build_context_block(retrieval["matches"])
@@ -127,4 +140,5 @@ def chat(req: ChatRequest):
         is_confident=True,
         model_used=model_used,
         sources=sources,
+        runtime_ms=round((perf_counter() - started_at) * 1000),
     )

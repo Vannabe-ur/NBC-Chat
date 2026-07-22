@@ -4,8 +4,6 @@ A local Retrieval-Augmented Generation (RAG) chatbot for answering questions abo
 
 The planned chatbot will retrieve relevant information from the local NBC dataset and use a Qwen language model running locally on the CPU to generate a grounded answer. No cloud LLM API is required for the RAG workflow.
 
-> Current status: the repository is at the initial data-preparation stage. The NBC dataset is available, while the Qwen inference, document retrieval, API, and web chat UI are still to be implemented.
-
 ## Goals
 
 - Run the chatbot locally with a Qwen model on CPU.
@@ -128,6 +126,13 @@ It currently prints:
 
 ```text
 Hello from nbc-bot!
+```
+---
+## API
+API contains `HEALTH`, `CHAT`, and `GET RECORD`
+
+```bash
+uv run uvicorn src.backend.api:app --reload
 ```
 
 The command will become the local chatbot launcher when the RAG and Qwen components are added.

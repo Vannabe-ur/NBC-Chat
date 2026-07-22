@@ -1,5 +1,5 @@
 import chromadb
-from vector_store import embed_text, PERSIST_DIR, COLLECTION_NAME
+from .vector_store import embed_text, PERSIST_DIR, COLLECTION_NAME
 
 DISTANCE_THRESHOLD = 0.6
 

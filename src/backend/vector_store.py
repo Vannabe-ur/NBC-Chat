@@ -1,7 +1,7 @@
 import ollama
 import chromadb
 from pathlib import Path
-from data_loader import load_nbc_dataset, QARecord
+from .data_loader import load_nbc_dataset, QARecord
 
 EMBED_MODEL = "nomic-embed-text"
 PERSIST_DIR = Path(__file__).resolve().parents[1] / "data" / "chroma_db"
